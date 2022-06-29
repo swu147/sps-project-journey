@@ -64,7 +64,7 @@
                 ${project.build.directory}/classes/META-INF/resources
               </outputDirectory>
               <resources>
-                <resource><directory>./src/webapp</directory></resource>
+                <resource><directory>./src/main/webapp</directory></resource>
               </resources>
             </configuration>
           </execution>
