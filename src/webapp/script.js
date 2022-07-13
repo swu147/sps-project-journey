@@ -50,7 +50,7 @@ function initMap() {
   google.maps.event.addListener(marker,'dragend',function(event) {
     var pos = {
       lat: marker.getPosition().lat(),
-      lang: marker.getPosition().lng(),
+      lng: marker.getPosition().lng(),
     };
   });
 
@@ -69,38 +69,47 @@ function initMap() {
     line: "1",
   };
   createLines(map, station.line, station.position, station.name, station.route);
+  createLines(map, station.line, station.position, station.name, station.route);
+
 }
 
 function createLines(map, line, pos, name, route) {
-    var el = document.createElement("div");
-    el.className = "transitLines";
-    el.innerHTML = `<h2>`+line+
-                  `</h2><br>Route: `+route+
-                  `<br>Current Station: `+name;
-    el.onclick = function() {toggleDisplay(map, line, pos, name, route)};
-    const box = document.getElementById("nearbyStops");
-    box.appendChild(el);
+  tmpl = document.getElementById("nearbyStops");
+  elem = tmpl.content.cloneNode(true);
+  elem.getElementById("lineName").innerText = line;
+  elem.getElementById("routeDescription").innerText = route;
+  elem.getElementById("stationName").innerText = name;
+
+  var container = document.createElement("div");
+  container.className = "transitLines";
+  container.append(elem);
+  container.onclick = function() {toggleDisplay(map, line, pos, name, route)};
+
+  document.getElementById("nearbyStopsContainer").append(container)
 }
 
 function createArrivalTime(map, line, pos, name, route) {
-  var el = document.createElement("div");
-    el.className = "transitLines transitTimes";
-    el.innerHTML = `<h2>`+line+
-                  `</h2><br>Route: `+route+
-                  `<br>Current Station: `+name+
-                  `<br><br>PLACEHOLDER FOR TIMES`;
-    el.onclick = function() {toggleDisplay(map, line, pos, name, route)};
-    const box = document.getElementById("transitTimes");
-    box.appendChild(el);
+  tmpl = document.getElementById("transitTimes");
+  elem = tmpl.content.cloneNode(true);
+  elem.getElementById("lineName").innerText = line;
+  elem.getElementById("routeDescription").innerText = route;
+  elem.getElementById("stationName").innerText = name;
+
+  var temp = document.createElement("div");
+  temp.className = "transitLines";
+  temp.append(elem);
+  temp.onclick = function() {toggleDisplay(map, line, pos, name, route)};
+
+  document.getElementById("transitTimesContainer").append(temp)
 }
 
 function toggleDisplay(map, line, pos, name, route) {
-  var nearStopsID = document.getElementById("nearbyStops");
-  var transTimeID = document.getElementById("transitTimes");
+  var nearStopsID = document.getElementById("nearbyStopsContainer");
+  var transTimeID = document.getElementById("transitTimesContainer");
 
   if (nearStopsID.style.display == "none") {
     nearStopsID.style.display = "block";
-    document.getElementById("transitTimes").innerHTML = "";
+    document.getElementById("transitTimesContainer").innerHTML = "";
 
   } else {
     nearStopsID.style.display = "none";

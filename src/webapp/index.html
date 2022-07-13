@@ -23,8 +23,27 @@
           <input type="text" class = "searchbar" placeholder="Search...">
         </div>
         <div class= "content">
-          <div id = "nearbyStops"></div>
-          <div id = "transitTimes"></div>
+         
+
+          <template id="nearbyStops">
+            <h2 id="lineName"></h2>
+            <br>
+            Route: <span id="routeDescription"></span>
+            <br>
+            Current Station: <span id="stationName"></span>
+          </template>
+          <div id="nearbyStopsContainer"></div>
+
+          <template id="transitTimes">
+            <h2 id="lineName"></h2>
+            <br>
+            Route: <span id="routeDescription"></span>
+            <br>
+            Current Station: <span id="stationName"></span>
+            <br><br>
+            PLACE HOLDER FOR WHEN TIME IS ADDED
+          </template>
+          <div id="transitTimesContainer"></div>
         </div>
 
       </div>
