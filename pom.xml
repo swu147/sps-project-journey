@@ -15,7 +15,11 @@
     <jetty.version>9.4.41.v20210516</jetty.version>
 
     <!-- Project-specific properties -->
+<<<<<<< HEAD
+    <exec.mainClass>com.google.sps.ServerMain</exec.mainClass>
+=======
     <exec.mainClass>ServerMain</exec.mainClass>
+>>>>>>> 12b92efd8dab716c7546692763bfa19c0e86c8f3
     <googleCloudProjectId>summer22-sps-5</googleCloudProjectId>
   </properties>
 
@@ -64,7 +68,11 @@
                 ${project.build.directory}/classes/META-INF/resources
               </outputDirectory>
               <resources>
+<<<<<<< HEAD
+                <resource><directory>./src/webapp</directory></resource>
+=======
                 <resource><directory>./src/main/webapp</directory></resource>
+>>>>>>> 12b92efd8dab716c7546692763bfa19c0e86c8f3
               </resources>
             </configuration>
           </execution>
