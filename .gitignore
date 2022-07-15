@@ -1,1 +1,8 @@
 api_keys.java
+.classpath
+.idea
+.project
+.settings/
+target/
+.theia
+
