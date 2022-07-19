@@ -70,6 +70,11 @@ final class MTAImpl extends MTA {
         return MTASchema_Subway.getSubwayStops(this);
     }
 
+    @Override
+    public ArrayList<Bus.Stop> getBusStops(){
+        return MTASchema_Bus.getBusStops(this);
+    }
+
     // void buildBus(){
 
     // }

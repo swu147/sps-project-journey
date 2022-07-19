@@ -74,7 +74,7 @@ public abstract class MTA {
 
     // public abstract void buildSubway();
     public abstract ArrayList<Subway.Stop> getSubwayStops();
-    // public abstract ArrayList<Bus.Stop> getBusStops();
+    public abstract ArrayList<Bus.Stop> getBusStops();
 
 // bus methods
 
