@@ -310,7 +310,7 @@ abstract class MTASchema_Bus extends MTASchema {
         );
 
         for(DataResource dr: resources){
-            final CSV stopsFile = dr.getData("stops.txt");
+            final CSV stopsFile = dr.getData("stop_to_route.txt");
             List<List<String>> rows = stopsFile.getRows();
             int nameIndex = stopsFile.getHeaderIndex("stop_name");
             int latIndex = stopsFile.getHeaderIndex("stop_lat");
@@ -322,11 +322,15 @@ abstract class MTASchema_Bus extends MTASchema {
                     private final String stopName = row.get(nameIndex);
                     private final Double stopLat  = Double.valueOf(row.get(latIndex));
                     private final Double stopLon  = Double.valueOf(row.get(longIndex));
-                    private ArrayList<String> routes;
+                    private String[] routes = row.get(row.size()-1).split(" ");
                     
         
                     // static data
-        
+                    @Override
+                    public final String[] getRoutes(){
+                        return routes;
+                    }
+
                     @Override
                     public final Integer getStopID(){
                         return stopID;
@@ -504,10 +508,14 @@ abstract class MTASchema_Bus extends MTASchema {
             private final String stopName = row.get(csv.getHeaderIndex("stop_name"));
             private final Double stopLat  = Double.valueOf(row.get(csv.getHeaderIndex("stop_lat")));
             private final Double stopLon  = Double.valueOf(row.get(csv.getHeaderIndex("stop_lon")));
-            private ArrayList<String> routes;
+            private String[] routes;
             
 
             // static data
+            @Override
+            public final String[] getRoutes(){
+                return routes;
+            }
 
             @Override
             public final Integer getStopID(){
@@ -527,11 +535,6 @@ abstract class MTASchema_Bus extends MTASchema {
             @Override
             public final Double getLongitude(){
                 return stopLon;
-            }
-
-            // @Override
-            public final ArrayList<String> getRoutes(){
-                return routes;
             }
 
             // live feed

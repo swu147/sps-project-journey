@@ -90,8 +90,7 @@ public abstract class DataResource {
                             case "routes.txt":
                             case "stops.txt":
                             case "transfers.txt":
-                            case "trips.txt":
-                            // case "stop_times.txt":
+                            case "stop_to_route.txt":
                                 try(
                                     final InputStream IS = zip.getInputStream(entry);
                                     final InputStreamReader ISR = new InputStreamReader(IS);

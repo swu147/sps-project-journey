@@ -33,6 +33,10 @@ import dev.katsute.onemta.attribute.*;
  */
 public abstract class TransitStop<SID, V extends TransitVehicle<?,?,?,?,?,?>, A extends TransitAlert<?,?,?,?>> implements Alerts<A>, Location, VehiclesReference<V>, Updatable {
 
+
+    
+    public abstract String[] getRoutes();
+
     /**
      * Returns the stop ID.
      *
@@ -41,6 +45,7 @@ public abstract class TransitStop<SID, V extends TransitVehicle<?,?,?,?,?,?>, A 
      * @since 1.0.0
      */
     public abstract SID getStopID();
+
 
     /**
      * Returns the stop name.

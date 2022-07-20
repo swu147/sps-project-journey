@@ -292,9 +292,7 @@ abstract class MTASchema_Subway extends MTASchema {
     public static ArrayList<Subway.Stop> getSubwayStops(MTA mta){
         ArrayList<Subway.Stop> subwayStops = new ArrayList<Subway.Stop>();
         final DataResource resource = getDataResource(mta, DataResourceType.Subway);
-        final CSV stopsFile               = resource.getData("stops.txt");
-        // final CSV timesFile               = resource.getData("stop_times.txt");
-        final CSV tripsFile               = resource.getData("trips.txt");
+        final CSV stopsFile               = resource.getData("stop_to_route.txt");
 
         List<List<String>> rows = stopsFile.getRows();
         int nameIndex = stopsFile.getHeaderIndex("stop_name");
@@ -307,11 +305,17 @@ abstract class MTASchema_Subway extends MTASchema {
                 private final String stopName = row.get(nameIndex);
                 private final Double stopLat = Double.valueOf(row.get(latIndex));
                 private final Double stopLon = Double.valueOf(row.get(longIndex));
+                private String[] routes = row.get(row.size()-1).split(" ");
+
     
                 private final SubwayDirection stopDirection = MTASchema_Subway.getDirection(stopID);
     
                 // static data
-    
+                @Override
+                public final String[] getRoutes(){
+                    return routes;
+                }
+
                 @Override
                 public final String getStopID(){
                     return stopID;
@@ -508,9 +512,16 @@ abstract class MTASchema_Subway extends MTASchema {
             private final Double stopLat = Double.valueOf(row.get(csv.getHeaderIndex("stop_lat")));
             private final Double stopLon = Double.valueOf(row.get(csv.getHeaderIndex("stop_lon")));
 
+            private String[] routes;
+
             private final SubwayDirection stopDirection = MTASchema_Subway.getDirection(stopID);
 
             // static data
+
+            @Override
+            public final String[] getRoutes(){
+                return routes;
+            }
 
             @Override
             public final String getStopID(){

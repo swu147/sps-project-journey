@@ -199,9 +199,15 @@ abstract class MTASchema_MNR extends MTASchema {
             private final Double stopLat  = Double.valueOf(row.get(csv.getHeaderIndex("stop_lat")));
             private final Double stopLon  = Double.valueOf(row.get(csv.getHeaderIndex("stop_lon")));
 
+            private String[] routes;
+
             private final Boolean wheelchairAccessible = !row.get(csv.getHeaderIndex("wheelchair_boarding")).equals("2");
 
             // static data
+            @Override
+            public final String[] getRoutes(){
+                return routes;
+            }
 
             @Override
             public final Integer getStopID(){
