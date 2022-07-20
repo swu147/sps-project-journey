@@ -25,6 +25,7 @@ import dev.katsute.onemta.railroad.LIRR;
 import dev.katsute.onemta.railroad.MNR;
 import dev.katsute.onemta.subway.Subway;
 import dev.katsute.onemta.subway.SubwayDirection;
+import dev.katsute.onemta.subway.Subway.Stop;
 
 /**
  * Represents the MTA API.
@@ -72,7 +73,10 @@ public abstract class MTA {
         return new MTAImpl(busToken, subwayToken, cacheSeconds, resources);
     }
 
-    // public abstract void buildSubway();
+    public abstract ArrayList<Bus.Stop> getNearBusStops(Double lon, Double lat);
+    public abstract ArrayList<Subway.Stop> getNearSubwayStops(Double lon, Double lat);
+
+
     public abstract ArrayList<Subway.Stop> getSubwayStops();
     public abstract ArrayList<Bus.Stop> getBusStops();
 
@@ -377,4 +381,5 @@ public abstract class MTA {
      */
     public abstract MNR.Alert[] getMNRAlerts();
 
+  
 }

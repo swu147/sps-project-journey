@@ -159,17 +159,6 @@ public class mtaServlet extends HttpServlet{
             }
             response.getWriter().println("\n");
         }
-
-        // ArrayList<Bus.Stop> busStops = mta.getBusStops();
-        // response.getWriter().println(busStops.size());
-        // for(Bus.Stop s : busStops){
-        //     String[] test = s.getRoutes();
-        //     response.getWriter().println(s.toString() + "\t");
-        //     for(String str : test){
-        //         response.getWriter().println(str + " ");
-        //     }
-        //     response.getWriter().println("\n");
-        // }
     }
 }
 
