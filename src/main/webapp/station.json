@@ -1,0 +1,63 @@
+data = `[
+        {
+            "stationID": 11,
+            "stationName": "Times Sq-42 St",
+            "pos": {
+                "lat": 40.754672,
+                "lng": -73.986754
+            },
+            "routes": [
+                {
+                    "lineID": 13,
+                    "line": "M",
+                    "destination": "NA"
+                },
+                {
+                    "lineID": 14,
+                    "line": "N",
+                    "destination": "NA"
+                }, 
+                {
+                    "lineID": 17,
+                    "line": "Q",
+                    "destination": "NA"
+
+                }, 
+                {
+                    "lineID": 18,
+                    "line": "R",
+                    "destination": "NA"
+                }, 
+                {
+                    "lineID": 23,
+                    "line": "W",
+                    "destination": "NA"
+                }
+            ]
+        },
+        {
+            "stationID": 27,
+            "stationName": "Atlantic Av-Barclays Ctr",
+            "pos": {
+                "lat": 40.683666,
+                "lng": -73.97881
+            },
+            "routes": [
+                {
+                    "lineID": 4,
+                    "line": "D",
+                    "destination": "NA"
+                },
+                {
+                    "lineID": 14,
+                    "line": "N",
+                    "destination": "NA"
+                }, 
+                {
+                    "lineID": 18,
+                    "line": "R",
+                    "destination": "NA"
+                }
+            ]
+        }
+]`;

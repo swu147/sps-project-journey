@@ -1,10 +1,13 @@
+<!DOCTYPE html>
 <html>
   <head>
     <meta charset="UTF-8">
       <title>Journey</title>
       <link rel="stylesheet" href="style.css">
       <link rel="stylesheet" href="navbar.css">
-      <script src="script.js"></script>
+      <script type="text/javascript" src="script.js"></script>
+      <script type="text/javascript" src="station.json"></script>
+
       <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBAvfDBMIvi0xYZhEmntRWXxm5tb-KHciw"></script>
   </head>
 
@@ -18,22 +21,30 @@
     <div class = "padding row">
       <div id="map"></div>
       <div class = "side-bar">
-        <div class = "searchbar">
+        <!-- <div class = "searchbar">
           <input type="text" class = "searchbar" placeholder="Search...">
-        </div>
+        </div> -->
         <div class= "content">
          
+          <template id="currentStation">
+            <h2 id="stationName"></h2>
+            <br>
+            Lines: <span id="stationLines"></span>
+          </template>
+          <div id="CurrentStationContainer"></div>
 
-          <template id="nearbyStops">
+          <template id="transitLine">
+            <h4 id = "backButton" style="color: #5384ED;">← Back</h4>
+            <br>
             <h2 id="lineName"></h2>
             <br>
             Route: <span id="routeDescription"></span>
+            <!-- <h4 id = "showTransport" style="color: #5384ED;">Show/Hide Locations →</h4> -->
             <br>
-            Current Station: <span id="stationName"></span>
           </template>
-          <div id="nearbyStopsContainer"></div>
+          <div id="transitLineContainer"></div>
 
-          <template id="transitTimes">
+          <!-- <template id="transitTimes">
             <h2 id="lineName"></h2>
             <br>
             Route: <span id="routeDescription"></span>
@@ -42,10 +53,11 @@
             <br><br>
             PLACE HOLDER FOR WHEN TIME IS ADDED
           </template>
-          <div id="transitTimesContainer"></div>
+          <div id="transitTimesContainer"></div> -->
         </div>
 
       </div>
     </div>  
   </body>
-</html>
+
+  </html>

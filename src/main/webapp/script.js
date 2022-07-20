@@ -1,19 +1,21 @@
-let map, infoWindow;
+let map, userPos,infoWindow, stationMarker;
+// var transportMarker = [];
+// var showTransportMarker = false;
 
 function initMap() {
-  var pos = {
+  userPos = {
     lat: 40.730610,
     lng: -73.935242,
   };
   
   map = new google.maps.Map(document.getElementById("map"), {
-    center: pos,
+    center: userPos,
     zoom: 12,
     gestureHandling: "cooperative",
   });
   
   var marker = new google.maps.Marker({
-    position: pos,
+    position: userPos,
     map: map,
     draggable:true,
     animation: google.maps.Animation.DROP,
@@ -30,13 +32,13 @@ function initMap() {
   if (navigator.geolocation) {
     navigator.geolocation.getCurrentPosition(
       (position) => {
-        pos = {
+        userPos = {
           lat: position.coords.latitude,
           lng: position.coords.longitude,
         };
 
-        map.setCenter(pos);
-        marker.setPosition(pos);
+        map.setCenter(userPos);
+        marker.setPosition(userPos);
         map.setZoom(15);
       },
     );
@@ -48,73 +50,149 @@ function initMap() {
 
   //marker dragged event gives new position
   google.maps.event.addListener(marker,'dragend',function(event) {
-    var pos = {
+    userPos = {
       lat: marker.getPosition().lat(),
       lng: marker.getPosition().lng(),
     };
+
   });
 
+  //turning on the transit layer
   const transitLayer = new google.maps.TransitLayer();
   transitLayer.setMap(map);
 
-  //TO DO LATER: WRITE AN ALGO THAT CAN LOOP THRU ALL THE LINES TO CREATELINES NEAR THE USER'S LOCATION
+  var customStyled = [
+    {
+      featureType: "all",
+      elementType: "labels",
+      stylers: [
+        { visibility: "simplified" }
+      ]
+    }
+  ];  
+  map.set('styles',customStyled);
 
-  const station = {
-    name: "Times Square",
-    route: "Astoria",
-    position: {
-      lat: 40.7559,
-      lng: -73.9871,
-    },
-    line: "1",
-  };
-  createLines(map, station.line, station.position, station.name, station.route);
-  createLines(map, station.line, station.position, station.name, station.route);
+  var station = JSON.parse(data);
+  for (var i = 0; i < station.length; i++) {
+    createStation(station[i]);
+  }
 
 }
 
-function createLines(map, line, pos, name, route) {
-  tmpl = document.getElementById("nearbyStops");
-  elem = tmpl.content.cloneNode(true);
-  elem.getElementById("lineName").innerText = line;
-  elem.getElementById("routeDescription").innerText = route;
-  elem.getElementById("stationName").innerText = name;
-
-  var container = document.createElement("div");
-  container.className = "transitLines";
+function createDiv(container, elem, className, containerID) {
+  container.className = className;
   container.append(elem);
-  container.onclick = function() {toggleDisplay(map, line, pos, name, route)};
-
-  document.getElementById("nearbyStopsContainer").append(container)
+  document.getElementById(containerID).append(container)
 }
 
-function createArrivalTime(map, line, pos, name, route) {
-  tmpl = document.getElementById("transitTimes");
-  elem = tmpl.content.cloneNode(true);
-  elem.getElementById("lineName").innerText = line;
-  elem.getElementById("routeDescription").innerText = route;
-  elem.getElementById("stationName").innerText = name;
-
-  var temp = document.createElement("div");
-  temp.className = "transitLines";
-  temp.append(elem);
-  temp.onclick = function() {toggleDisplay(map, line, pos, name, route)};
-
-  document.getElementById("transitTimesContainer").append(temp)
-}
-
-function toggleDisplay(map, line, pos, name, route) {
-  var nearStopsID = document.getElementById("nearbyStopsContainer");
-  var transTimeID = document.getElementById("transitTimesContainer");
-
-  if (nearStopsID.style.display == "none") {
-    nearStopsID.style.display = "block";
-    document.getElementById("transitTimesContainer").innerHTML = "";
-
-  } else {
-    nearStopsID.style.display = "none";
-    createArrivalTime(map, line, pos, name, route);
+function getStationLines(station,stationLines) {
+  for (var i = 0; i < station.length; i++) {
+    stationLines.push(station[i]["line"]);
   }
 }
+
+function createStation(station) {
+  tmpl = document.getElementById("currentStation");
+  elem = tmpl.content.cloneNode(true);
+  elem.getElementById("stationName").innerText = station["stationName"];
+  
+  var stationLines = [];
+  getStationLines(station["routes"],stationLines)
+  elem.getElementById("stationLines").innerText = stationLines.toString();
+  var container = document.createElement("div");
+  container.onclick = function() {showLines(station)};
+  createDiv(container, elem, "transitLines", "CurrentStationContainer");
+}
+
+function createLines(station) {
+  tmpl = document.getElementById("transitLine");
+    elem = tmpl.content.cloneNode(true);
+    elem.getElementById("lineName").innerText = station["line"];
+    elem.getElementById("routeDescription").innerText = station["destination"];
+    elem.getElementById("backButton").onclick = function() {showLines(station)};
+    // elem.getElementById("showTransport").onclick = function() {showTransportLocation(station)};
+    var container = document.createElement("div");
+    createDiv(container, elem, "transitLines", "transitLineContainer");
+}
+
+function showLines(station) {
+  var currentStation = document.getElementById("CurrentStationContainer");
+
+  if (currentStation.style.display == "none") {
+    currentStation.style.display = "block";
+    // if (showTransportMarker) {
+    //   removeTranportMarker();
+    // }
+    stationMarker.setMap(null);
+    map.setCenter(userPos);
+    map.setZoom(12);
+    document.getElementById("transitLineContainer").innerHTML = "";
+  } 
+  else {
+    currentStation.style.display = "none";
+    for (var i = 0; i < station["routes"].length; i++) {
+      createLines(station["routes"][i]);
+    }
+    createStationMarker(station["pos"]);
+    map.setCenter(station["pos"]);
+    map.setZoom(15);
+  }
+}
+
+function createStationMarker (stationLocation) {
+  stationMarker = new google.maps.Marker({
+    position: stationLocation,
+    map: map,
+    animation: google.maps.Animation.DROP,
+  });
+}
+
+// function showTransportLocation(station) {
+//   if (!showTransportMarker) {
+//     var bus = [
+//       {
+//         position : {
+//           lat: 40.754672, //info that will be fetched
+//           lng: -73.986754
+//         }
+//       },
+//       {
+//         position : {
+//           lat: 40.754672, 
+//           lng: -73.97881
+//         }
+//       }
+//     ];
+//     for (var i = 0; i < bus.length; i++) {
+//       createTransportMarker(bus[i].position);
+//     }
+//     showTransportMarker = true;
+//   }
+//   else {
+//     removeTranportMarker();
+//   }
+  
+// }
+
+// //placeholder but this would take in the type of trans for marker shape and the lat and long of the bus
+// function createTransportMarker (transportPosition) {
+//   const transportImage = "https://icons.iconarchive.com/icons/martz90/circle-addon2/48/public-transport-icon.png";
+//   newTransportMarker = new google.maps.Marker({
+//     position: transportPosition,
+//     map: map,
+//     animation: google.maps.Animation.DROP,
+//     icon: transportImage,
+//   });
+//   transportMarker.push(newTransportMarker);
+// }
+
+// function removeTranportMarker(){
+//   for(var i=0; i<transportMarker.length; i++){
+//     transportMarker[i].setMap(null);
+//   }
+//   map.setCenter(userPos);
+//   map.setZoom(12);
+//   showTransportMarker = false;
+// }
 
 window.initMap = initMap;
