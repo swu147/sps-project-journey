@@ -73,8 +73,8 @@ public abstract class MTA {
         return new MTAImpl(busToken, subwayToken, cacheSeconds, resources);
     }
 
-    public abstract ArrayList<Bus.Stop> getNearBusStops(Double lon, Double lat);
-    public abstract ArrayList<Subway.Stop> getNearSubwayStops(Double lon, Double lat);
+    public abstract ArrayList<Bus.Stop> getNearBusStops(Double lat, Double lon);
+    public abstract ArrayList<Subway.Stop> getNearSubwayStops(Double lat, Double lon);
 
 
     public abstract ArrayList<Subway.Stop> getSubwayStops();

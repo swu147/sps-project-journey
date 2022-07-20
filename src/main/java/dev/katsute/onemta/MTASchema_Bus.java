@@ -1181,7 +1181,7 @@ abstract class MTASchema_Bus extends MTASchema {
 
     static double haversine(double lat1, double lon1,
                             double lat2, double lon2)
-    {
+    {   
         // distance between latitudes and longitudes
         double dLat = Math.toRadians(lat2 - lat1);
         double dLon = Math.toRadians(lon2 - lon1);
@@ -1200,15 +1200,15 @@ abstract class MTASchema_Bus extends MTASchema {
         return rad * c;
     }
 
-	public static ArrayList<Stop> getNearStops(MTA mta, Double lon, Double lat) {
-        int km_away = 1;
+	public static ArrayList<Stop> getNearStops(MTA mta, Double lat, Double lon) {
+        double km_away = .5;
         ArrayList<Bus.Stop> stops = mta.getBusStops();
         ArrayList<Bus.Stop> result = new ArrayList<Bus.Stop>();
 
         for(Bus.Stop s : stops){
-            // if(haversine(lat, lon, s.getLatitude(), s.getLongitude()) < km_away){
+            if(haversine(lat, lon, s.getLatitude(), s.getLongitude()) < km_away){
                 result.add(s);
-            // }
+            }
         }
 		return result;
 	}

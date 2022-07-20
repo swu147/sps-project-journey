@@ -1087,16 +1087,16 @@ abstract class MTASchema_Subway extends MTASchema {
         return rad * c;
     }
 
-	public static ArrayList<Stop> getNearStops(MTA mta, Double lon, Double lat) {
-        int km_away = 1;
+	public static ArrayList<Stop> getNearStops(MTA mta, Double lat, Double lon) {
+        double km_away = .5;
         ArrayList<Subway.Stop> stops = MTASchema_Subway.getSubwayStops(mta);
         ArrayList<Subway.Stop> result = new ArrayList<Subway.Stop>();
 
-        // for(Subway.Stop s : stops){
-        //     if(haversine(lat, lon, s.getLatitude(), s.getLongitude()) < km_away){
-        //         result.add(s);
-        //     }
-        // }
+        for(Subway.Stop s : stops){
+            if(haversine(lat, lon, s.getLatitude(), s.getLongitude()) < km_away){
+                result.add(s);
+            }
+        }
 		return result;
 	}
 

@@ -136,31 +136,33 @@ public class NearbyStopsServlet  extends HttpServlet{
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
 
-        // String textValue = Jsoup.clean(request.getParameter("text-input"), Safelist.basic());
-        // String[] values = textValue.split(" ");
-        // Double lon = Double.parseDouble(values[0]);
-        // Double lat = Double.parseDouble(values[1]);
-        // // ArrayList<Subway.Stop> subwayStops = mta.getNearSubwayStops( lon, lat);
-        // ArrayList<Bus.Stop> busStops = mta.getNearBusStops( lon, lat);
-        // response.getWriter().println(lon + " " + lat);
+        String textValue = Jsoup.clean(request.getParameter("text-input"), Safelist.basic());
+        String[] values = textValue.split(" ");
+        Double lat = Double.parseDouble(values[0]);
+        Double lon = Double.parseDouble(values[1]);
+        ArrayList<Subway.Stop> subwayStops = mta.getNearSubwayStops( lat, lon);
+        ArrayList<Bus.Stop> busStops = mta.getNearBusStops( lat, lon);
+        response.getWriter().println(subwayStops.size() + " " + busStops.size());
         
 
-        // Gson gson = new Gson();
-        // String busJson = gson.toJson(busStops);
-        // // String subwayJson = gson.toJson(subwayStops);
-        // // // Send the JSON as the response
-        // response.setContentType("application/json;");
-        // response.getWriter().println(busJson);
-
-        ArrayList<Subway.Stop> subwayStops = mta.getSubwayStops();
-        for(Subway.Stop s : subwayStops){
-            String[] test = s.getRoutes();
-            response.getWriter().println(s.toString() + "\t");
-            for(String str : test){
-                response.getWriter().println(str + " ");
-            }
-            response.getWriter().println("\n");
-        }
+        Gson gson = new Gson();
+        String busJson = gson.toJson(busStops);
+        String subwayJson = gson.toJson(subwayStops);
+        // // Send the JSON as the response
+        // ObjectMapper mapper = new ObjectMapper();
+        // String jsonString = mapper.writeValueAsString(bu);
+        response.setContentType("application/json;");
+        response.getWriter().println(busJson + subwayJson);
+        // response.getWriter().println(busStops.size());
+        // // ArrayList<Subway.Stop> subwayStops = mta.getSubwayStops();
+        // for(Subway.Stop s : subwayStops){
+        //     String[] test = s.getRoutes();
+        //     response.getWriter().println(s.toString() + "\t");
+        //     for(String str : test){
+        //         response.getWriter().println(str + " ");
+        //     }
+        //     response.getWriter().println("\n");
+        // }
     }
 
 }
