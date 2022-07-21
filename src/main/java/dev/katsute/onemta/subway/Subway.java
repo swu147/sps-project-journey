@@ -55,7 +55,11 @@ public abstract class Subway {
      * @author Katsute
      */
     public abstract static class Stop extends TransitStop<String,Vehicle,Alert> implements Direction<SubwayDirection> {
-
+        protected String stopID;
+        private String stopName;
+        private Double stopLat;
+        private Double stopLon;
+        protected String[] routes;
         /**
          * Returns a list of transfers.
          *

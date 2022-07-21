@@ -2,6 +2,7 @@ package servlets;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Type;
 import java.net.URL;
 import java.util.ArrayList;
 
@@ -11,6 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import org.apache.commons.io.FileUtils;
 
@@ -23,6 +25,8 @@ import dev.katsute.onemta.subway.Subway;
 
 import org.jsoup.Jsoup;
 import org.jsoup.safety.Safelist;
+
+import data.Station;
 
 @WebServlet("/stops")
 public class NearbyStopsServlet  extends HttpServlet{
@@ -142,27 +146,25 @@ public class NearbyStopsServlet  extends HttpServlet{
         Double lon = Double.parseDouble(values[1]);
         ArrayList<Subway.Stop> subwayStops = mta.getNearSubwayStops( lat, lon);
         ArrayList<Bus.Stop> busStops = mta.getNearBusStops( lat, lon);
-        response.getWriter().println(subwayStops.size() + " " + busStops.size());
-        
+
+        ArrayList <Station>busStations = new ArrayList<>();
+        ArrayList <Station>subwayStations = new ArrayList<>();
+
+        for(Bus.Stop s : busStops){
+            Station station = new Station(s.getLongitude(), s.getLatitude(), s.getStopName(), Integer.toString(s.getStopID()), s.getRoutes(), "SUBWAY");
+            busStations.add(station);
+        }
+
+        for(Subway.Stop s : subwayStops){
+            Station station = new Station(s.getLongitude(), s.getLatitude(), s.getStopName(), s.getStopID(), s.getRoutes(), "BUS");
+            subwayStations.add(station);
+        }
 
         Gson gson = new Gson();
-        String busJson = gson.toJson(busStops);
-        String subwayJson = gson.toJson(subwayStops);
-        // // Send the JSON as the response
-        // ObjectMapper mapper = new ObjectMapper();
-        // String jsonString = mapper.writeValueAsString(bu);
-        response.setContentType("application/json;");
+        String busJson = gson.toJson(busStations);
+        String subwayJson = gson.toJson(subwayStations);
+    
         response.getWriter().println(busJson + subwayJson);
-        // response.getWriter().println(busStops.size());
-        // // ArrayList<Subway.Stop> subwayStops = mta.getSubwayStops();
-        // for(Subway.Stop s : subwayStops){
-        //     String[] test = s.getRoutes();
-        //     response.getWriter().println(s.toString() + "\t");
-        //     for(String str : test){
-        //         response.getWriter().println(str + " ");
-        //     }
-        //     response.getWriter().println("\n");
-        // }
     }
 
 }

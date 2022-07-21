@@ -5,16 +5,18 @@ public final class Station {
     private final double longitude;
     private final double latitude;
     private final String stationName;
-    private final Integer id;
-    // private final String lineName;
+    private final String id;
+    private final String[] routes;
+    private final String type;
     // private final Vehicle[] listOfVehicles;
 
-  public Station(double longitude, double latitude, String stationName, Integer id) {
+  public Station(double longitude, double latitude, String stationName, String id, String[] routes, String type) {
     this.longitude = longitude;
     this.latitude = latitude;
     this.stationName = stationName;
     this.id = id;
-    // this.lineName = lineName;
+    this.routes = routes;
+    this.type = type;
     // this.listOfVehicles = listOfVehicles;
   }
 
@@ -27,12 +29,12 @@ public final class Station {
   public String getStationName(){
     return stationName;
     }
-  public Integer getId(){
+  public String getId(){
     return id;
     }
-//   public String getLineName(){
-//     return lineName;
-//     }
+  public String[] getLineName(){
+    return routes;
+    }
 //   public Vehicle[] getListOfVehicles(){
 //     return listOfVehicles;
 //     }
