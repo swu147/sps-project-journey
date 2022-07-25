@@ -36,6 +36,10 @@ final class MTAImpl extends MTA {
     final transient String busToken;
     final transient String subwayToken;
 
+    // public ArrayList<Subway.Stop> subwayStops = new ArrayList<Subway.Stop>();
+    // public ArrayList<Bus.Stop> busStops = new ArrayList<Bus.Stop>();
+
+
     final MTAService service;
 
     private final DataResource[] resources;
@@ -56,8 +60,40 @@ final class MTAImpl extends MTA {
                 return resource;
         throw new MissingResourceException(type);
     }
+    @Override
+    public ArrayList<Bus.Stop> getNearBusStops(Double lat, Double lon){
+        return MTASchema_Bus.getNearStops(this, lat, lon);
+    }
+    @Override
+    public ArrayList<Subway.Stop> getNearSubwayStops(Double lat, Double lon){
+        return MTASchema_Subway.getNearStops(this, lat, lon);
+    }
+
+    @Override
+    public ArrayList<Subway.Stop> getSubwayStops(){
+        return MTASchema_Subway.getSubwayStops(this);
+    }
+
+    @Override
+    public ArrayList<Bus.Stop> getBusStops(){
+        return MTASchema_Bus.getBusStops(this);
+    }
+
+    // void buildBus(){
+
+    // }
 
     // bus methods
+
+    // @Override
+    // public final ArrayList<Subway.Stop> getSubwayStops(){
+    //     return this.subwayStops;
+    // }
+
+    // @Override
+    // public final ArrayList<Bus.Stop> getBusStops(){
+    //     return this.busStops;
+    // }
 
     @Override
     public final Bus.Route getBusRoute(final String route_id){
@@ -335,6 +371,8 @@ final class MTAImpl extends MTA {
             alerts.add(MTASchema_MNR.asTransitAlert(this, feed.getEntity(i)));
         return alerts.toArray(new MNR.Alert[0]);
     }
+
+
 
 
 }

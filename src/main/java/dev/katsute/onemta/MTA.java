@@ -18,11 +18,14 @@
 
 package dev.katsute.onemta;
 
+import java.util.ArrayList;
+
 import dev.katsute.onemta.bus.Bus;
 import dev.katsute.onemta.railroad.LIRR;
 import dev.katsute.onemta.railroad.MNR;
 import dev.katsute.onemta.subway.Subway;
 import dev.katsute.onemta.subway.SubwayDirection;
+import dev.katsute.onemta.subway.Subway.Stop;
 
 /**
  * Represents the MTA API.
@@ -35,6 +38,7 @@ import dev.katsute.onemta.subway.SubwayDirection;
  */
 @SuppressWarnings("SpellCheckingInspection")
 public abstract class MTA {
+
 
     MTA(){ }
 
@@ -68,6 +72,13 @@ public abstract class MTA {
     public static MTA create(final String busToken, final String subwayToken, final int cacheSeconds, final DataResource... resources){
         return new MTAImpl(busToken, subwayToken, cacheSeconds, resources);
     }
+
+    public abstract ArrayList<Bus.Stop> getNearBusStops(Double lat, Double lon);
+    public abstract ArrayList<Subway.Stop> getNearSubwayStops(Double lat, Double lon);
+
+
+    public abstract ArrayList<Subway.Stop> getSubwayStops();
+    public abstract ArrayList<Bus.Stop> getBusStops();
 
 // bus methods
 
@@ -370,4 +381,5 @@ public abstract class MTA {
      */
     public abstract MNR.Alert[] getMNRAlerts();
 
+  
 }
