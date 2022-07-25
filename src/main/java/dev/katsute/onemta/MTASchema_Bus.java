@@ -20,8 +20,10 @@ package dev.katsute.onemta;
 
 import dev.katsute.onemta.Json.JsonObject;
 import dev.katsute.onemta.bus.BusDirection;
+import dev.katsute.onemta.bus.Bus.Stop;
 import dev.katsute.onemta.types.TransitAgency;
 import dev.katsute.onemta.types.TransitAlertPeriod;
+import dev.katsute.onemta.bus.Bus;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -296,6 +298,161 @@ abstract class MTASchema_Bus extends MTASchema {
         };
     }
 
+    static ArrayList<Bus.Stop> getBusStops(MTA mta){
+        ArrayList<Bus.Stop> busStops = new ArrayList<Bus.Stop>();
+
+        final List<DataResource> resources = Arrays.asList(
+            getDataResource(mta, DataResourceType.Bus_Brooklyn),
+            getDataResource(mta, DataResourceType.Bus_Bronx),
+            getDataResource(mta, DataResourceType.Bus_Manhattan),
+            getDataResource(mta, DataResourceType.Bus_Queens),
+            getDataResource(mta, DataResourceType.Bus_StatenIsland),
+            getDataResource(mta, DataResourceType.Bus_Company)
+        );
+
+        for(DataResource dr: resources){
+            final CSV stopsFile = dr.getData("stop_to_route.txt");
+            List<List<String>> rows = stopsFile.getRows();
+            int nameIndex = stopsFile.getHeaderIndex("stop_name");
+            int latIndex = stopsFile.getHeaderIndex("stop_lat");
+            int longIndex = stopsFile.getHeaderIndex("stop_lon");
+
+            for(List<String> row: rows){
+                Bus.Stop currStop = new Bus.Stop(){
+                    private final Integer stopID  = Integer.parseInt(row.get(0));
+                    private final String stopName = row.get(nameIndex);
+                    private final Double stopLat  = Double.valueOf(row.get(latIndex));
+                    private final Double stopLon  = Double.valueOf(row.get(longIndex));
+                    private String[] routes = row.get(row.size()-1).split(" ");
+                    
+        
+                    // static data
+                    @Override
+                    public final String[] getRoutes(){
+                        return routes;
+                    }
+
+                    @Override
+                    public final Integer getStopID(){
+                        return stopID;
+                    }
+        
+                    @Override
+                    public final String getStopName(){
+                        return stopName;
+                    }
+        
+                    @Override
+                    public final Double getLatitude(){
+                        return stopLat;
+                    }
+        
+                    @Override
+                    public final Double getLongitude(){
+                        return stopLon;
+                    }
+        
+               
+        
+                    // live feed
+        
+                    private List<Vehicle> vehicles = null;
+        
+                    @Override
+                    public final Vehicle[] getVehicles(){
+                        return getVehicles(false);
+                    }
+        
+                    private Vehicle[] getVehicles(final boolean update){
+                        if(vehicles == null || update){
+                            final JsonObject json = cast(mta).service.bus.getStop(cast(mta).busToken, stopID, null, null);
+        
+                            final JsonObject stopMonitoringDelivery = json
+                                .getJsonObject("Siri")
+                                .getJsonObject("ServiceDelivery")
+                                .getJsonArray("StopMonitoringDelivery")[0];
+        
+                            final JsonObject[] monitoredStopVisit =
+                                stopMonitoringDelivery.containsKey("MonitoredStopVisit")
+                                ? stopMonitoringDelivery.getJsonArray("MonitoredStopVisit")
+                                : new JsonObject[9];
+        
+                            final List<Vehicle> vehicles = new ArrayList<>();
+                            for(final JsonObject obj : monitoredStopVisit)
+                                vehicles.add(asVehicle(mta, obj.getJsonObject("MonitoredVehicleJourney"), null, this));
+                            this.vehicles = Collections.unmodifiableList(vehicles);
+                        }
+                        return vehicles.toArray(new Vehicle[0]);
+                    }
+        
+                    private List<Alert> alerts = null;
+        
+                    @Override
+                    public final Alert[] getAlerts(){
+                        return getAlerts(false);
+                    }
+        
+                    private Alert[] getAlerts(final boolean update){
+                        if(alerts == null || update){
+                            final List<Alert> alerts = new ArrayList<>();
+                            final GTFSRealtimeProto.FeedMessage feed = cast(mta).service.alerts.getBus(cast(mta).subwayToken);
+                            final int len = feed.getEntityCount();
+                            for(int i = 0; i < len; i++){
+                                final Alert alert = MTASchema_Bus.asTransitAlert(mta, feed.getEntity(i));
+                                if(Arrays.asList(alert.getStopIDs()).contains(stopID))
+                                    alerts.add(alert);
+                            }
+                            this.alerts = alerts;
+                        }
+                        return alerts.toArray(new Alert[0]);
+                    }
+        
+                    // onemta methods
+        
+                    @Override
+                    public final boolean isExactStop(final Object object){
+                        if(object instanceof Stop)
+                            return getStopID().toString().equalsIgnoreCase(((Stop) object).getStopID().toString());
+                        else if(object instanceof String)
+                            return getStopID().toString().equalsIgnoreCase(((String) object));
+                        else if(object instanceof Number)
+                            return getStopID().equals(object);
+                        else
+                            return false;
+                    }
+        
+                    @Override
+                    public final boolean isSameStop(final Object object){
+                        return isExactStop(object);
+                    }
+        
+                    @Override
+                    public final void refresh(){
+                        getAlerts(true);
+                        getVehicles(true);
+                    }
+        
+                    // Java
+        
+                    @Override
+                    public final String toString(){
+                        return "Bus.Stop{" +
+                                "stopID=" + stopID +
+                                ", stopName='" + stopName + '\'' +
+                                ", stopLat=" + stopLat +
+                                ", stopLon=" + stopLon +
+                                '}';
+                    }
+        
+                };
+                busStops.add(currStop);
+            
+            }
+        }
+        return busStops;
+
+    }
+
     static Stop asStop(final MTA mta, final int stop_id){
         return asStop(mta, stop_id, null);
     }
@@ -352,8 +509,14 @@ abstract class MTASchema_Bus extends MTASchema {
             private final String stopName = row.get(csv.getHeaderIndex("stop_name"));
             private final Double stopLat  = Double.valueOf(row.get(csv.getHeaderIndex("stop_lat")));
             private final Double stopLon  = Double.valueOf(row.get(csv.getHeaderIndex("stop_lon")));
+            private String[] routes;
+            
 
             // static data
+            @Override
+            public final String[] getRoutes(){
+                return routes;
+            }
 
             @Override
             public final Integer getStopID(){
@@ -1015,5 +1178,39 @@ abstract class MTASchema_Bus extends MTASchema {
 
         };
     }
+
+    static double haversine(double lat1, double lon1,
+                            double lat2, double lon2)
+    {   
+        // distance between latitudes and longitudes
+        double dLat = Math.toRadians(lat2 - lat1);
+        double dLon = Math.toRadians(lon2 - lon1);
+ 
+        // convert to radians
+        lat1 = Math.toRadians(lat1);
+        lat2 = Math.toRadians(lat2);
+ 
+        // apply formulae
+        double a = Math.pow(Math.sin(dLat / 2), 2) +
+                   Math.pow(Math.sin(dLon / 2), 2) *
+                   Math.cos(lat1) *
+                   Math.cos(lat2);
+        double rad = 6371;
+        double c = 2 * Math.asin(Math.sqrt(a));
+        return rad * c;
+    }
+
+	public static ArrayList<Stop> getNearStops(MTA mta, Double lat, Double lon) {
+        double km_away = .5;
+        ArrayList<Bus.Stop> stops = mta.getBusStops();
+        ArrayList<Bus.Stop> result = new ArrayList<Bus.Stop>();
+
+        for(Bus.Stop s : stops){
+            if(haversine(lat, lon, s.getLatitude(), s.getLongitude()) < km_away){
+                result.add(s);
+            }
+        }
+		return result;
+	}
 
 }
