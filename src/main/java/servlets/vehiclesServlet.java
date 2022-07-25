@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.lang.reflect.Type;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Objects;
 
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -146,7 +147,8 @@ public class vehiclesServlet  extends HttpServlet{
         String textValue = Jsoup.clean(request.getParameter("text-input"), Safelist.basic());
         String[] values = textValue.split(" ");
         String stopID = values[0];
-        int type = Integer.parseInt(values[1]);
+        String type = values[1];
+        String routeID = values[2];
 
         // response.getWriter().println(type.length());
         // System.out.println(type == 0);
@@ -155,27 +157,33 @@ public class vehiclesServlet  extends HttpServlet{
         Gson gson = new Gson();
         String res = "";
 
-        if(type == 0){
+        if(Objects.equals(type, "BUS")){
             ArrayList<busVehicle> vehicles = new ArrayList<busVehicle>();
             Bus.Vehicle[] b = mta.getBusStop(Integer.valueOf(stopID)).getVehicles();
-            // response.getWriter().println(b.length);
             // response.getWriter().println(stopID + type);
 
 
             for(Bus.Vehicle v : b){
-                busVehicle vehicle = new busVehicle(v);
-                vehicles.add(vehicle);
+                // response.getWriter().println(routeID + v.getRouteID());
+                // response.getWriter().println(Objects.equals(routeID, v.getRouteID()));
+                if(Objects.equals(routeID, v.getRouteID())){
+                    busVehicle vehicle = new busVehicle(v);
+                    vehicles.add(vehicle);
+                }
+
             }
             res = gson.toJson(vehicles);
         }
-        else if(type == 1){
+        else if(Objects.equals(type, "Subway")){
             ArrayList<subwayVehicle> vehicles = new ArrayList<subwayVehicle>();
             Subway.Vehicle[] s = mta.getSubwayStop(stopID).getVehicles();
             // response.getWriter().println(s.length);
 
             for(Subway.Vehicle v : s){
-                subwayVehicle vehicle = new subwayVehicle(v);
-                vehicles.add(vehicle);
+                if(Objects.equals(routeID, v.getRouteID())){
+                    subwayVehicle vehicle = new subwayVehicle(v);
+                    vehicles.add(vehicle);
+                }
             }
             res = gson.toJson(vehicles);
         }
