@@ -1,4 +1,4 @@
-# Journey
+# [Journey] (https://summer22-sps-5.appspot.com/)
 
 <!-- <img src='https://github.com/swu147.sps-project-journey/walkthrough.gif' width='' alt='Video Walkthrough' /> -->
 
