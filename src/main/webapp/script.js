@@ -143,8 +143,9 @@ function showLines(station) {
 
     for (var i = 0; i < station["routes"].length; i++) {
         const params = new URLSearchParams();
-        var paramInfo = station["id"]+" "+station["type"]+" "+station["routes"];
-        params.append("text-input", paramInfo);
+        // var paramInfo = station["id"]+" "+station["type"]+" "+station["routes"];
+        var paramInfo = "300000 BUS B1";
+        params.append("text-input", paramInfo);        
         // const response;
         // ( async () => response = await fetch("/vehicles", {method: 'POST', body: params}) )();
         (async function () {

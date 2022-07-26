@@ -150,23 +150,23 @@ public class NearbyStopsServlet  extends HttpServlet{
         ArrayList<Subway.Stop> subwayStops = mta.getNearSubwayStops( lat, lon);
         ArrayList<Bus.Stop> busStops = mta.getNearBusStops( lat, lon);
 
-        ArrayList <Station>busStations = new ArrayList<>();
-        ArrayList <Station>subwayStations = new ArrayList<>();
+        ArrayList <Station>Stations = new ArrayList<>();
+        // ArrayList <Station>subwayStations = new ArrayList<>();
 
         for(Bus.Stop s : busStops){
             Station station = new Station(s.getLongitude(), s.getLatitude(), s.getStopName(), Integer.toString(s.getStopID()), s.getRoutes(), "BUS");
-            busStations.add(station);
+            Stations.add(station);
         }
 
         for(Subway.Stop s : subwayStops){
             Station station = new Station(s.getLongitude(), s.getLatitude(), s.getStopName(), s.getStopID(), s.getRoutes(), "SUBWAY");
-            subwayStations.add(station);
+            Stations.add(station);
         }
 
         Gson gson = new Gson();
         //String busJson = gson.toJson(busStations);
-        String subwayJson = gson.toJson(subwayStations);
+        String Json = gson.toJson(Stations);
     
-        response.getWriter().println(subwayJson);
+        response.getWriter().println(Json);
     }
 }
