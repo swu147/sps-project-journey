@@ -2,10 +2,10 @@ let map, userPos,infoWindow, stationMarker;
 // var transportMarker = [];
 // var showTransportMarker = false;
 
-function initMap() {
+async function initMap() {
   userPos = {
-    lat: 40.730610,
-    lng: -73.935242,
+    lat: 40.7614,
+    lng: -73.9776,
   };
   
   map = new google.maps.Map(document.getElementById("map"), {
@@ -72,10 +72,18 @@ function initMap() {
   ];  
   map.set('styles',customStyled);
 
-  var station = JSON.parse(data);
-  for (var i = 0; i < station.length; i++) {
-    createStation(station[i]);
-  }
+    const params = new URLSearchParams();
+    let currpos = (userPos.lat+" "+userPos.lng).toString();
+    params.append("text-input", currpos);
+
+    //params.append("text-input", "40.750580 -73.993584");
+    const response = await fetch("/stops", {method: 'POST', body: params});
+    const stopsJson = await response.json(); 
+    for (var i = 0; i < stopsJson.length; i++) {
+        createStation(stopsJson[i]);
+    }
+    console.log(stopsJson);
+
 
 }
 

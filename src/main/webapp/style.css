@@ -72,3 +72,8 @@ html {
   height: 80vh;
   width: 60vw;
 }
+
+form{
+    margin-top: 20px;
+    display: block;
+}

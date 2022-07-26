@@ -28,7 +28,10 @@ import org.jsoup.safety.Safelist;
 
 import data.Station;
 
+import javax.servlet.annotation.MultipartConfig;
+
 @WebServlet("/stops")
+@MultipartConfig
 public class NearbyStopsServlet  extends HttpServlet{
     MTA mta;
     File bronx = null, brooklyn = null, manhattan = null,
@@ -151,20 +154,19 @@ public class NearbyStopsServlet  extends HttpServlet{
         ArrayList <Station>subwayStations = new ArrayList<>();
 
         for(Bus.Stop s : busStops){
-            Station station = new Station(s.getLongitude(), s.getLatitude(), s.getStopName(), Integer.toString(s.getStopID()), s.getRoutes(), "SUBWAY");
+            Station station = new Station(s.getLongitude(), s.getLatitude(), s.getStopName(), Integer.toString(s.getStopID()), s.getRoutes(), "BUS");
             busStations.add(station);
         }
 
         for(Subway.Stop s : subwayStops){
-            Station station = new Station(s.getLongitude(), s.getLatitude(), s.getStopName(), s.getStopID(), s.getRoutes(), "BUS");
+            Station station = new Station(s.getLongitude(), s.getLatitude(), s.getStopName(), s.getStopID(), s.getRoutes(), "SUBWAY");
             subwayStations.add(station);
         }
 
         Gson gson = new Gson();
-        String busJson = gson.toJson(busStations);
+        //String busJson = gson.toJson(busStations);
         String subwayJson = gson.toJson(subwayStations);
     
-        response.getWriter().println(busJson + subwayJson);
+        response.getWriter().println(subwayJson);
     }
-
 }
