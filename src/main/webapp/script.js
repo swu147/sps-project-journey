@@ -83,8 +83,6 @@ async function initMap() {
         createStation(stopsJson[i]);
     }
     console.log(stopsJson);
-
-
 }
 
 function createDiv(container, elem, className, containerID) {
@@ -93,9 +91,9 @@ function createDiv(container, elem, className, containerID) {
   document.getElementById(containerID).append(container)
 }
 
-function getStationLines(station,stationLines) {
-  for (var i = 0; i < station.length; i++) {
-    stationLines.push(station[i]["line"]);
+function getStationLines(routes,stationLines) {
+  for (var i = 0; i < routes.length; i++) {
+    stationLines.push(routes[i]);
   }
 }
 
