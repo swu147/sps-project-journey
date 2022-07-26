@@ -54,8 +54,9 @@ async function initMap() {
       lat: marker.getPosition().lat(),
       lng: marker.getPosition().lng(),
     };
-
   });
+
+// console.log(marker.getPosition());
 
   //turning on the transit layer
   const transitLayer = new google.maps.TransitLayer();
@@ -75,8 +76,6 @@ async function initMap() {
     const params = new URLSearchParams();
     let currpos = (userPos.lat+" "+userPos.lng).toString();
     params.append("text-input", currpos);
-
-    //params.append("text-input", "40.750580 -73.993584");
     const response = await fetch("/stops", {method: 'POST', body: params});
     const stopsJson = await response.json(); 
     for (var i = 0; i < stopsJson.length; i++) {
@@ -113,10 +112,9 @@ function createStation(station) {
 function createLines(station) {
   tmpl = document.getElementById("transitLine");
     elem = tmpl.content.cloneNode(true);
-    elem.getElementById("lineName").innerText = station["line"];
-    elem.getElementById("routeDescription").innerText = station["destination"];
+    elem.getElementById("lineName").innerText = station;
+    elem.getElementById("routeDescription").innerText = "NA";
     elem.getElementById("backButton").onclick = function() {showLines(station)};
-    // elem.getElementById("showTransport").onclick = function() {showTransportLocation(station)};
     var container = document.createElement("div");
     createDiv(container, elem, "transitLines", "transitLineContainer");
 }
@@ -136,11 +134,34 @@ function showLines(station) {
   } 
   else {
     currentStation.style.display = "none";
+
+    var stationPos = {
+        lat: station["latitude"],
+        lng: station["longitude"],
+
+    };
+
     for (var i = 0; i < station["routes"].length; i++) {
-      createLines(station["routes"][i]);
+        const params = new URLSearchParams();
+        var paramInfo = station["id"]+" "+station["type"]+" "+station["routes"];
+        params.append("text-input", paramInfo);
+        // const response;
+        // ( async () => response = await fetch("/vehicles", {method: 'POST', body: params}) )();
+        (async function () {
+            const response2 = await fetch("/vehicles", {method: 'POST', body: params});
+            const routesJson = await response2.json(); 
+            createLines(station["routes"][i]);
+            console.log("Routes:");
+            console.log(routesJson);
+        }())
+    
     }
-    createStationMarker(station["pos"]);
-    map.setCenter(station["pos"]);
+
+    // for (var i = 0; i < station["routes"].length; i++) {
+    //   createLines(station["routes"][i]);
+    // }
+    createStationMarker(stationPos);
+    map.setCenter(stationPos);
     map.setZoom(15);
   }
 }
@@ -152,53 +173,5 @@ function createStationMarker (stationLocation) {
     animation: google.maps.Animation.DROP,
   });
 }
-
-// function showTransportLocation(station) {
-//   if (!showTransportMarker) {
-//     var bus = [
-//       {
-//         position : {
-//           lat: 40.754672, //info that will be fetched
-//           lng: -73.986754
-//         }
-//       },
-//       {
-//         position : {
-//           lat: 40.754672, 
-//           lng: -73.97881
-//         }
-//       }
-//     ];
-//     for (var i = 0; i < bus.length; i++) {
-//       createTransportMarker(bus[i].position);
-//     }
-//     showTransportMarker = true;
-//   }
-//   else {
-//     removeTranportMarker();
-//   }
-  
-// }
-
-// //placeholder but this would take in the type of trans for marker shape and the lat and long of the bus
-// function createTransportMarker (transportPosition) {
-//   const transportImage = "https://icons.iconarchive.com/icons/martz90/circle-addon2/48/public-transport-icon.png";
-//   newTransportMarker = new google.maps.Marker({
-//     position: transportPosition,
-//     map: map,
-//     animation: google.maps.Animation.DROP,
-//     icon: transportImage,
-//   });
-//   transportMarker.push(newTransportMarker);
-// }
-
-// function removeTranportMarker(){
-//   for(var i=0; i<transportMarker.length; i++){
-//     transportMarker[i].setMap(null);
-//   }
-//   map.setCenter(userPos);
-//   map.setZoom(12);
-//   showTransportMarker = false;
-// }
 
 window.initMap = initMap;
