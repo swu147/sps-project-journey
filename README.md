@@ -1,5 +1,7 @@
 # Journey
 
+<!-- <img src='https://github.com/swu147.sps-project-journey/walkthrough.gif' width='' alt='Video Walkthrough' /> -->
+
 Webapp that gives Metropolitan Transportation Authority (MTA) transit data based on location. 
 - Shows nearby bus stops and train stations on a map. 
   - Stops include all routes that visit that stop.
