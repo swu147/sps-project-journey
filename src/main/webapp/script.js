@@ -114,7 +114,7 @@ function createLines(station, stationId, stationType, stationRoute) {
   tmpl = document.getElementById("transitLine");
     elem = tmpl.content.cloneNode(true);
     elem.getElementById("lineName").innerText = stationRoute;
-    elem.getElementById("routeDescription").innerText = "NA";
+    elem.getElementById("stationName").innerText = station["stationName"];
     elem.getElementById("backButton").onclick = function() {showLines(station)};
     elem.getElementById("showTransport").onclick = function() {routesServerCall(stationId, stationType, stationRoute)};
     var container = document.createElement("div");
