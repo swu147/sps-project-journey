@@ -120,52 +120,118 @@ function createLines(station) {
 }
 
 function showLines(station) {
-  var currentStation = document.getElementById("CurrentStationContainer");
-
-  if (currentStation.style.display == "none") {
-    currentStation.style.display = "block";
-    // if (showTransportMarker) {
-    //   removeTranportMarker();
-    // }
-    stationMarker.setMap(null);
+    var currentStation = document.getElementById("CurrentStationContainer");
+  
+    if (currentStation.style.display == "none") {
+      currentStation.style.display = "block";
+      // if (showTransportMarker) {
+      //   removeTranportMarker();
+      // }
+      stationMarker.setMap(null);
+      map.setCenter(userPos);
+      map.setZoom(12);
+      document.getElementById("transitLineContainer").innerHTML = "";
+    } 
+    else {
+      currentStation.style.display = "none";
+  
+      var stationPos = {
+          lat: station["latitude"],
+          lng: station["longitude"],
+  
+      };
+  
+      // const params = new URLSearchParams();
+      //     var paramInfo = station["id"]+" "+station["type"]+" "+station["routes"];
+      //     // var paramInfo = "300000 BUS B1";
+      //     params.append("text-input", paramInfo);        
+  
+  
+      const forLoop = async _ => {
+          for (var i = 0; i < station["routes"].length; i++) {
+              const params = new URLSearchParams();
+              var paramInfo = station["id"]+" "+station["type"]+" "+station["routes"][i];
+              // var paramInfo = "300000 BUS B1";
+              params.append("text-input", paramInfo);            
+              const response2 = await fetch("/vehicles", {method: 'POST', body: params});
+              const routesJson = await response2.json(); 
+              createLines(station["routes"][i]);
+              console.log(routesJson);
+          }
+      }
+      forLoop();
+      // for (var i = 0; i < station["routes"].length; i++) {
+      //     const params = new URLSearchParams();
+      //     var paramInfo = station["id"]+" "+station["type"]+" "+station["routes"][i];
+      //     // var paramInfo = "300000 BUS B1";
+      //     params.append("text-input", paramInfo);        
+      //     // const response;
+      //     // ( async () => response = await fetch("/vehicles", {method: 'POST', body: params}) )();
+      //     (async function () {
+      //         const response2 = await fetch("/vehicles", {method: 'POST', body: params});
+      //         const routesJson = await response2.json(); 
+      //         createLines(station["routes"][i]);
+      //         console.log(i);
+      //         // console.log("Routes:");
+      //         // console.log(routesJson);
+      //     }())
+      
+      // }
+  
+      // for (var i = 0; i < station["routes"].length; i++) {
+      //   createLines(station["routes"][i]);
+      // }
+      createStationMarker(stationPos);
+      map.setCenter(stationPos);
+      map.setZoom(15);
+    }
+  }
+  function showTransportLocation(routes) {
+    if (!showTransportMarker) {
+      for (var i = 0; i < routes.length; i++) {
+          var vehiclePos = {
+              lat: routes[i]["lat"],
+              lng: routes[i]["lon"],
+          }
+          console.log(vehiclePos);
+        createTransportMarker(vehiclePos, routes);
+      }
+      showTransportMarker = true;
+    }
+    else {
+      removeTranportMarker();
+    }
+    
+  }
+  
+  //placeholder but this would take in the type of trans for marker shape and the lat and long of the bus
+  function createTransportMarker (transportPosition, routes) {
+    const transportImage = "https://icons.iconarchive.com/icons/martz90/circle-addon2/48/public-transport-icon.png";
+    newTransportMarker = new google.maps.Marker({
+      position: transportPosition,
+      map: map,
+      animation: google.maps.Animation.DROP,
+      // icon: transportImage,
+      icon: {
+          path: google.maps.SymbolPath.CIRCLE,
+          scale: 5,
+          fillOpacity: 1,
+          strokeWeight: 2,
+          fillColor: '#ffffff',
+        },
+      label: { color: '#000000', fontWeight: 'bold', fontSize: '14px', text: routes["stopsAway"].toString()},
+    });
+    transportMarker.push(newTransportMarker);
+  }
+  
+  function removeTranportMarker(){
+    for(var i=0; i<transportMarker.length; i++){
+      transportMarker[i].setMap(null);
+    }
     map.setCenter(userPos);
     map.setZoom(12);
-    document.getElementById("transitLineContainer").innerHTML = "";
-  } 
-  else {
-    currentStation.style.display = "none";
-
-    var stationPos = {
-        lat: station["latitude"],
-        lng: station["longitude"],
-
-    };
-
-    for (var i = 0; i < station["routes"].length; i++) {
-        const params = new URLSearchParams();
-        // var paramInfo = station["id"]+" "+station["type"]+" "+station["routes"];
-        var paramInfo = "300000 BUS B1";
-        params.append("text-input", paramInfo);        
-        // const response;
-        // ( async () => response = await fetch("/vehicles", {method: 'POST', body: params}) )();
-        (async function () {
-            const response2 = await fetch("/vehicles", {method: 'POST', body: params});
-            const routesJson = await response2.json(); 
-            createLines(station["routes"][i]);
-            console.log("Routes:");
-            console.log(routesJson);
-        }())
-    
-    }
-
-    // for (var i = 0; i < station["routes"].length; i++) {
-    //   createLines(station["routes"][i]);
-    // }
-    createStationMarker(stationPos);
-    map.setCenter(stationPos);
-    map.setZoom(15);
+    showTransportMarker = false;
   }
-}
 
 function createStationMarker (stationLocation) {
   stationMarker = new google.maps.Marker({
