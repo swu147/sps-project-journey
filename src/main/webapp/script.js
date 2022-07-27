@@ -209,12 +209,12 @@ function routesServerCall(stationId, stationType, stationRoute) {
 function showTransportLocation(routes) {
   if (!showTransportMarker) {
     map.setCenter(stationPos);
-    map.setZoom(15);
+    map.setZoom(12);
     for (var i = 0; i < routes.length; i++) {
         //NEED TO EDIT THIS TO THE ACTUAL POS TMR//////////////////////////
         var vehiclePos = {
-            lat: 40.7614,
-            lng: -73.9776,
+            lat: routes[i]["lat"],
+            lng: routes[i]["lon"],
         }
         console.log(vehiclePos);
       createTransportMarker(vehiclePos, routes);
@@ -234,15 +234,15 @@ function createTransportMarker (transportPosition, routes) {
     position: transportPosition,
     map: map,
     animation: google.maps.Animation.DROP,
-    // icon: transportImage,
-    icon: {
-        path: google.maps.SymbolPath.CIRCLE,
-        scale: 15,
-        fillOpacity: 1,
-        strokeWeight: 2,
-        fillColor: '#ffffff',
-      },
-    label: { color: '#000000', fontWeight: 'bold', fontSize: '14px', text: "NA"}, //NEED TO CHANGE TEXT /////////////////////////
+    icon: transportImage,
+    // icon: {
+    //     path: google.maps.SymbolPath.CIRCLE,
+    //     scale: 15,
+    //     fillOpacity: 1,
+    //     strokeWeight: 2,
+    //     fillColor: '#ffffff',
+    //   },
+    // label: { color: '#000000', fontWeight: 'bold', fontSize: '14px', text: "NA"}, //NEED TO CHANGE TEXT /////////////////////////
   });
   transportMarker.push(newTransportMarker);
 }
@@ -252,7 +252,7 @@ function removeTranportMarker(){
     transportMarker[i].setMap(null);
   }
   map.setCenter(userPos);
-  map.setZoom(12);
+  map.setZoom(15);
   showTransportMarker = false;
 }
 
