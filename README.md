@@ -42,5 +42,8 @@ In no particular order:
 - UI changes
 - Refreshing realtime data
 - Cleaning up servers for faster load times
+- Add more data to subway vehicles
+- Refresh stops when marker changes.
+- Include destinations for subway routes. 
 
 
