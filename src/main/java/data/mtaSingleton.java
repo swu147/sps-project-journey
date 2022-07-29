@@ -29,21 +29,14 @@ public enum mtaSingleton {
     INSTANCE();
 
     private MTA mta;
-    // private String info;
-
-    // public void setInfo(){
-    //     info = "END";
-    // }
-
-    // public String getInfo(){
-    //     return info;
-    // }
+    private ArrayList<Station> Stations = new ArrayList<Station>();
+    private ArrayList<Subway.Stop> subwayStops;
+    private ArrayList<Bus.Stop> busStops;
 
     private mtaSingleton(){
-    // info = "Start";
-        File bronx = null, brooklyn = null, manhattan = null,
-     queens = null, staten_island = null, bus = null, subway = null, lirr = null, mnr = null;
 
+    File bronx = null, brooklyn = null, manhattan = null,
+    queens = null, staten_island = null, bus = null, subway = null, lirr = null, mnr = null;
 
 
     URL resource = getClass().getResource("/dev/katsute/onemta/google_transit_bronx.zip");
@@ -144,6 +137,22 @@ public enum mtaSingleton {
         DataResource.create(DataResourceType.LongIslandRailroad, lirr),
         DataResource.create(DataResourceType.MetroNorthRailroad, mnr)
     );
+
+    subwayStops = mta.getSubwayStops();
+    busStops = mta.getBusStops();
+
+
+    for(Bus.Stop s : busStops){
+        Station station = new Station(s.getLongitude(), s.getLatitude(), s.getStopName(), Integer.toString(s.getStopID()), s.getRoutes(), "BUS");
+        Stations.add(station);
+    }
+
+    for(Subway.Stop s : subwayStops){
+        Station station = new Station(s.getLongitude(), s.getLatitude(), s.getStopName(), s.getStopID(), s.getRoutes(), "SUBWAY");
+        Stations.add(station);
+    }
+
+
     }
 
     public mtaSingleton getInstance() {
@@ -152,6 +161,14 @@ public enum mtaSingleton {
 
     public MTA getMta(){
         return mta;
+    }
+
+    public ArrayList<Subway.Stop> getSubwayStops(){
+        return subwayStops;
+    }
+    
+    public ArrayList<Bus.Stop> getBusStops(){
+        return busStops;
     }
     
 }

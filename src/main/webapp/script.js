@@ -48,6 +48,11 @@ async function initMap() {
     alert("Error: Your browser doesn't support geolocation.");
   }
 
+  userPos = {
+    lat: marker.getPosition().lat(),
+    lng: marker.getPosition().lng(),
+  };
+
   //marker dragged event gives new position
   google.maps.event.addListener(marker,'dragend',function(event) {
     userPos = {

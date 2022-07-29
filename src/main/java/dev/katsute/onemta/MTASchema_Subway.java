@@ -29,6 +29,21 @@ import java.util.regex.Pattern;
 import static dev.katsute.onemta.GTFSRealtimeProto.*;
 import static dev.katsute.onemta.subway.Subway.*;
 
+import data.mtaSingleton;
+
+import java.text.ParseException; 
+import java.util.ArrayList; 
+import java.util.Collections; 
+import java.util.Comparator; 
+import java.util.HashMap; 
+import java.util.LinkedHashMap; 
+import java.util.List; 
+import java.util.Map.Entry; 
+import java.util.Set; 
+import java.util.TreeMap;
+
+
+
 @SuppressWarnings("SpellCheckingInspection")
 abstract class MTASchema_Subway extends MTASchema {
 
@@ -1087,9 +1102,41 @@ abstract class MTASchema_Subway extends MTASchema {
         return rad * c;
     }
 
-	public static ArrayList<Stop> getNearStops(MTA mta, Double lat, Double lon) {
+	// public static ArrayList<Stop> getNearStops(MTA mta, Double lat, Double lon) {
+    //     double km_away = .5;
+    //     mtaSingleton singleton = mtaSingleton.INSTANCE.getInstance();
+    //     ArrayList<Subway.Stop> stops = singleton.getSubwayStops();
+    //     ArrayList<Subway.Stop> result = new ArrayList<Subway.Stop>();
+
+    //     HashMap<Subway.Stop, Double> hash = new HashMap<Subway.Stop, Double>();
+
+    //     for(Subway.Stop s : stops){
+    //         hash.put(s,haversine(lat, lon, s.getLatitude(), s.getLongitude()));
+    //     }
+
+    //     Comparator<Entry<Subway.Stop, Double>> valueComparator = 
+    //         new Comparator<Entry<Subway.Stop, Double>>() 
+    //             { @Override public int compare(Entry<Subway.Stop, Double> e1, Entry<Subway.Stop, Double> e2) {
+    //                  Double v1 = e1.getValue(); 
+    //                  Double v2 = e2.getValue(); 
+    //                  return v1.compareTo(v2); 
+    //                 }
+    //              }; 
+    //     Set<Entry<Subway.Stop, Double>> entries = hash.entrySet();
+    //     List<Entry<Subway.Stop, Double>> listOfEntries = new ArrayList<Entry<Subway.Stop, Double>>(entries);
+
+    //     Collections.sort(listOfEntries, valueComparator);
+
+    //     for(Entry<Subway.Stop, Double> entry : listOfEntries){
+    //         result.add(entry.getKey());
+    //     }
+
+	// 	return result;
+	// }
+    public static ArrayList<Stop> getNearStops(MTA mta, Double lat, Double lon) {
         double km_away = .5;
-        ArrayList<Subway.Stop> stops = MTASchema_Subway.getSubwayStops(mta);
+        mtaSingleton singleton = mtaSingleton.INSTANCE.getInstance();
+        ArrayList<Subway.Stop> stops = singleton.getSubwayStops();
         ArrayList<Subway.Stop> result = new ArrayList<Subway.Stop>();
 
         for(Subway.Stop s : stops){
@@ -1099,5 +1146,6 @@ abstract class MTASchema_Subway extends MTASchema {
         }
 		return result;
 	}
+
 
 }
