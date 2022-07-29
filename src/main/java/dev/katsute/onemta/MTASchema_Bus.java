@@ -30,6 +30,8 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.regex.Pattern;
 
+import data.mtaSingleton;
+
 import static dev.katsute.onemta.bus.Bus.*;
 
 @SuppressWarnings({"SpellCheckingInspection", "ConstantConditions"})
@@ -1200,9 +1202,9 @@ abstract class MTASchema_Bus extends MTASchema {
         return rad * c;
     }
 
-	public static ArrayList<Stop> getNearStops(MTA mta, Double lat, Double lon) {
-        double km_away = .5;
-        ArrayList<Bus.Stop> stops = mta.getBusStops();
+	public static ArrayList<Stop> getNearStops(MTA mta, Double lat, Double lon, Double km_away) {
+        mtaSingleton singleton = mtaSingleton.INSTANCE.getInstance();
+        ArrayList<Bus.Stop> stops = singleton.getBusStops();
         ArrayList<Bus.Stop> result = new ArrayList<Bus.Stop>();
 
         for(Bus.Stop s : stops){

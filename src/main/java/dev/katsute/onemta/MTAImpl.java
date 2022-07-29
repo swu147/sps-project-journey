@@ -61,12 +61,12 @@ final class MTAImpl extends MTA {
         throw new MissingResourceException(type);
     }
     @Override
-    public ArrayList<Bus.Stop> getNearBusStops(Double lat, Double lon){
-        return MTASchema_Bus.getNearStops(this, lat, lon);
+    public ArrayList<Bus.Stop> getNearBusStops(Double lat, Double lon, Double distance){
+        return MTASchema_Bus.getNearStops(this, lat, lon, distance);
     }
     @Override
-    public ArrayList<Subway.Stop> getNearSubwayStops(Double lat, Double lon){
-        return MTASchema_Subway.getNearStops(this, lat, lon);
+    public ArrayList<Subway.Stop> getNearSubwayStops(Double lat, Double lon, Double distance){
+        return MTASchema_Subway.getNearStops(this, lat, lon, distance);
     }
 
     @Override

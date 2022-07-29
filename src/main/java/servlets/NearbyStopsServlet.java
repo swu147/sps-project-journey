@@ -51,21 +51,24 @@ public class NearbyStopsServlet  extends HttpServlet{
         String[] values = textValue.split(" ");
         Double lat = Double.parseDouble(values[0]);
         Double lon = Double.parseDouble(values[1]);
-        ArrayList<Subway.Stop> subwayStops = mta.getNearSubwayStops( lat, lon);
-        ArrayList<Bus.Stop> busStops = mta.getNearBusStops( lat, lon);
+        Double km_away = 0.5;
 
-        ArrayList <Station>Stations = new ArrayList<>();
-        // ArrayList <Station>subwayStations = new ArrayList<>();
+        ArrayList<Station> Stations = Station.getStations(lat, lon, km_away);
+        // ArrayList<Subway.Stop> subwayStops = mta.getNearSubwayStops( lat, lon);
+        // ArrayList<Bus.Stop> busStops = mta.getNearBusStops( lat, lon);
 
-        for(Bus.Stop s : busStops){
-            Station station = new Station(s.getLongitude(), s.getLatitude(), s.getStopName(), Integer.toString(s.getStopID()), s.getRoutes(), "BUS");
-            Stations.add(station);
-        }
+        // ArrayList <Station>Stations = new ArrayList<>();
+        // // ArrayList <Station>subwayStations = new ArrayList<>();
 
-        for(Subway.Stop s : subwayStops){
-            Station station = new Station(s.getLongitude(), s.getLatitude(), s.getStopName(), s.getStopID(), s.getRoutes(), "SUBWAY");
-            Stations.add(station);
-        }
+        // for(Bus.Stop s : busStops){
+        //     Station station = new Station(s.getLongitude(), s.getLatitude(), s.getStopName(), Integer.toString(s.getStopID()), s.getRoutes(), "BUS");
+        //     Stations.add(station);
+        // }
+
+        // for(Subway.Stop s : subwayStops){
+        //     Station station = new Station(s.getLongitude(), s.getLatitude(), s.getStopName(), s.getStopID(), s.getRoutes(), "SUBWAY");
+        //     Stations.add(station);
+        // }
 
         Gson gson = new Gson();
         //String busJson = gson.toJson(busStations);

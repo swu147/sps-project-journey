@@ -31,16 +31,6 @@ import static dev.katsute.onemta.subway.Subway.*;
 
 import data.mtaSingleton;
 
-import java.text.ParseException; 
-import java.util.ArrayList; 
-import java.util.Collections; 
-import java.util.Comparator; 
-import java.util.HashMap; 
-import java.util.LinkedHashMap; 
-import java.util.List; 
-import java.util.Map.Entry; 
-import java.util.Set; 
-import java.util.TreeMap;
 
 
 
@@ -1102,8 +1092,7 @@ abstract class MTASchema_Subway extends MTASchema {
         return rad * c;
     }
 
-	// public static ArrayList<Stop> getNearStops(MTA mta, Double lat, Double lon) {
-    //     double km_away = .5;
+	// public static ArrayList<Stop> getNearStops(MTA mta, Double lat, Double lon, Double km_away) {
     //     mtaSingleton singleton = mtaSingleton.INSTANCE.getInstance();
     //     ArrayList<Subway.Stop> stops = singleton.getSubwayStops();
     //     ArrayList<Subway.Stop> result = new ArrayList<Subway.Stop>();
@@ -1133,8 +1122,7 @@ abstract class MTASchema_Subway extends MTASchema {
 
 	// 	return result;
 	// }
-    public static ArrayList<Stop> getNearStops(MTA mta, Double lat, Double lon) {
-        double km_away = .5;
+    public static ArrayList<Stop> getNearStops(MTA mta, Double lat, Double lon, Double km_away) {
         mtaSingleton singleton = mtaSingleton.INSTANCE.getInstance();
         ArrayList<Subway.Stop> stops = singleton.getSubwayStops();
         ArrayList<Subway.Stop> result = new ArrayList<Subway.Stop>();

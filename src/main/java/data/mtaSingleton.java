@@ -32,6 +32,7 @@ public enum mtaSingleton {
     private ArrayList<Station> Stations = new ArrayList<Station>();
     private ArrayList<Subway.Stop> subwayStops;
     private ArrayList<Bus.Stop> busStops;
+    private Double km_away = 0.5;
 
     private mtaSingleton(){
 
@@ -140,15 +141,15 @@ public enum mtaSingleton {
 
     subwayStops = mta.getSubwayStops();
     busStops = mta.getBusStops();
-
+    
 
     for(Bus.Stop s : busStops){
-        Station station = new Station(s.getLongitude(), s.getLatitude(), s.getStopName(), Integer.toString(s.getStopID()), s.getRoutes(), "BUS");
+        Station station = new Station(s.getLongitude(), s.getLatitude(), s.getStopName(), Integer.toString(s.getStopID()), s.getRoutes(), "BUS", km_away);
         Stations.add(station);
     }
 
     for(Subway.Stop s : subwayStops){
-        Station station = new Station(s.getLongitude(), s.getLatitude(), s.getStopName(), s.getStopID(), s.getRoutes(), "SUBWAY");
+        Station station = new Station(s.getLongitude(), s.getLatitude(), s.getStopName(), s.getStopID(), s.getRoutes(), "SUBWAY", km_away);
         Stations.add(station);
     }
 
