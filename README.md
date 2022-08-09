@@ -27,7 +27,7 @@ These stops are then sent back to client side to be displayed on the map as well
 To display a map, we used the Google Maps Api. This allowed us to use the longitude and latitude given from the servlet to put markers on the map representing bus stops/ train stations as well as any other objects we wanted. 
 
 #### Render nearby stops -> Select a stop
-![](https://github.com/swu147/sps-project-journey/blob/readme/SelectStop.gif)
+![](https://github.com/swu147/sps-project-journey/blob/finalDevelopment3/SelectStop.gif)
 
 #### Render routes of a stop -> Select a route -> Render vehicles on the route
 <!-- ![](https://github.com/swu147/sps-project-journey/SelectRoute.gif) -->
