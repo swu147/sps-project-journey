@@ -10,7 +10,7 @@ async function initMap() {
   
   map = new google.maps.Map(document.getElementById("map"), {
     center: userPos,
-    zoom: 12,
+    zoom: 15,
     gestureHandling: "cooperative",
   });
   
@@ -36,22 +36,21 @@ async function initMap() {
           lat: position.coords.latitude,
           lng: position.coords.longitude,
         };
-
+        callStationServer(userPos);
         map.setCenter(userPos);
         marker.setPosition(userPos);
         map.setZoom(15);
       },
+      () => {
+        callStationServer(userPos);
+      }
     );
   } 
   else {
     // Browser doesn't support Geolocation
     alert("Error: Your browser doesn't support geolocation.");
   }
-
-  userPos = {
-    lat: marker.getPosition().lat(),
-    lng: marker.getPosition().lng(),
-  };
+ 
 
   //marker dragged event gives new position
   google.maps.event.addListener(marker,'dragend',function(event) {
@@ -59,9 +58,10 @@ async function initMap() {
       lat: marker.getPosition().lat(),
       lng: marker.getPosition().lng(),
     };
+    document.getElementById("CurrentStationContainer").innerHTML = "";
+    callStationServer(userPos);
   });
-
-// console.log(marker.getPosition());
+  
 
   //turning on the transit layer
   const transitLayer = new google.maps.TransitLayer();
@@ -77,16 +77,22 @@ async function initMap() {
     }
   ];  
   map.set('styles',customStyled);
+}
 
-    const params = new URLSearchParams();
-    let currpos = (userPos.lat+" "+userPos.lng).toString();
-    params.append("text-input", currpos);
-    const response = await fetch("/stops", {method: 'POST', body: params});
-    const stopsJson = await response.json(); 
-    for (var i = 0; i < stopsJson.length; i++) {
-        createStation(stopsJson[i]);
+function callStationServer(userPos1) {
+    const forLoop = async _ => {
+        const params = new URLSearchParams();
+        let currpos = (userPos1.lat+" "+userPos1.lng).toString();
+        params.append("text-input", currpos);
+        const response = await fetch("/stops", {method: 'POST', body: params});
+        const stopsJson = await response.json(); 
+        for (var i = 0; i < stopsJson.length; i++) {
+            createStation(stopsJson[i], userPos);
+        }
+        console.log(stopsJson);
     }
-    console.log(stopsJson);
+    forLoop();
+    
 }
 
 function createDiv(container, elem, className, containerID) {
@@ -101,7 +107,7 @@ function getStationLines(routes,stationLines) {
   }
 }
 
-function createStation(station) {
+function createStation(station, userPos) {
   tmpl = document.getElementById("currentStation");
   elem = tmpl.content.cloneNode(true);
   elem.getElementById("stationName").innerText = station["stationName"];
@@ -110,33 +116,33 @@ function createStation(station) {
   getStationLines(station["routes"],stationLines)
   elem.getElementById("stationLines").innerText = stationLines.toString();
   var container = document.createElement("div");
-  container.onclick = function() {showLines(station)};
+  container.onclick = function() {showLines(station,userPos)};
   createDiv(container, elem, "transitLines", "CurrentStationContainer");
 }
 
-function createLines(station, stationId, stationType, stationRoute) {
+function createLines(station, stationId, stationType, stationRoute, userPos) {
     
   tmpl = document.getElementById("transitLine");
     elem = tmpl.content.cloneNode(true);
     elem.getElementById("lineName").innerText = stationRoute;
     elem.getElementById("stationName").innerText = station["stationName"];
-    elem.getElementById("backButton").onclick = function() {showLines(station)};
+    elem.getElementById("backButton").onclick = function() {showLines(station,userPos)};
     elem.getElementById("showTransport").onclick = function() {routesServerCall(stationId, stationType, stationRoute)};
     var container = document.createElement("div");
     createDiv(container, elem, "transitLines", "transitLineContainer");
 }
 
-function showLines(station) {
+function showLines(station,userPos) {
   var currentStation = document.getElementById("CurrentStationContainer");
 
   if (currentStation.style.display == "none") {
     currentStation.style.display = "block";
-    if (showTransportMarker) {
-      removeTranportMarker();
+    if (showTransportMarker) {  
+      removeTranportMarker(userPos);
     }
     stationMarker.setMap(null);
     map.setCenter(userPos);
-    map.setZoom(12);
+    // map.setZoom(12);
     document.getElementById("transitLineContainer").innerHTML = "";
   } 
   else {
@@ -149,42 +155,11 @@ function showLines(station) {
     };
 
 
-
-    // const forLoop = async _ => {
-    //     for (var i = 0; i < station["routes"].length; i++) {
-    //         const params = new URLSearchParams();
-    //         var paramInfo = station["id"]+" "+station["type"]+" "+station["routes"][i];
-    //         // var paramInfo = "300000 BUS B1";
-    //         params.append("text-input", paramInfo);            
-    //         const response2 = await fetch("/vehicles", {method: 'POST', body: params});
-    //         const routesJson = await response2.json(); 
-    //         createLines(station["routes"][i], routesJson);
-    //         console.log(routesJson);
-    //     }
-    // }
-    // forLoop();
-
-    // for (var i = 0; i < station["routes"].length; i++) {
-    //     const params = new URLSearchParams();
-    //     // var paramInfo = station["id"]+" "+station["type"]+" "+station["routes"][i];
-    //     var paramInfo = "300000 BUS B1";
-    //     params.append("text-input", paramInfo);        
-    //     // const response;
-    //     // ( async () => response = await fetch("/vehicles", {method: 'POST', body: params}) )();
-    //     (async function () {
-    //         const response2 = await fetch("/vehicles", {method: 'POST', body: params});
-    //         const routesJson = await response2.json(); 
-    //         createLines(station["routes"][i], routesJson);
-    //         console.log(routesJson);
-    //     }())
-    
-    // }
-
     for (var i = 0; i < station["routes"].length; i++) {
-      createLines(station, station["id"],station["type"],station["routes"][i]);
+      createLines(station, station["id"],station["type"],station["routes"][i],userPos);
     }
     createStationMarker(stationPos);
-    map.setCenter(stationPos);
+    map.setCenter(userPos);
     map.setZoom(15);
   }
 }
@@ -252,7 +227,7 @@ function createTransportMarker (transportPosition, routes) {
   transportMarker.push(newTransportMarker);
 }
 
-function removeTranportMarker(){
+function removeTranportMarker(userPos){
   for(var i=0; i<transportMarker.length; i++){
     transportMarker[i].setMap(null);
   }
