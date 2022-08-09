@@ -30,7 +30,7 @@ To display a map, we used the Google Maps Api. This allowed us to use the longit
 ![](https://github.com/swu147/sps-project-journey/blob/readme/SelectStop.gif)
 
 #### Render routes of a stop -> Select a route -> Render vehicles on the route
-![](https://github.com/swu147/sps-project-journey/blob/readme/SelectRoute.gif)
+![](https://github.com/swu147/sps-project-journey/SelectRoute.gif)
 
 ## Features we want to implement
 
